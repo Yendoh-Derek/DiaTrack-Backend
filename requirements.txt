@@ -12,3 +12,10 @@ cloudpickle
 fastapi
 uvicorn
 python-jose
+passlib[bcrypt]
+python-dotenv        
+sqlalchemy            
+psycopg2-binary       
+alembic               
+pydantic              
+requests              

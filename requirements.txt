@@ -18,6 +18,10 @@ sqlalchemy
 psycopg2-binary       
 alembic               
 pydantic              
+<<<<<<< HEAD
 requests     
 google-generativeai    
 email-validator     
+=======
+requests              
+>>>>>>> 42ab0c5de3539d83e28ddfa673fb8e0573ef1aff

@@ -20,4 +20,9 @@ alembic
 pydantic              
 requests     
 google-generativeai    
-email-validator     
+gunicorn
+httpx
+pytest
+pytest-asyncio
+email-validator
+python-multipart   

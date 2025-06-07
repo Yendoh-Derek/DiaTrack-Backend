@@ -20,3 +20,12 @@ class PredictionOutput(BaseModel):
     prediction_time: datetime
     feature_input: Dict[str, Any]
     recommendation: str
+
+class UserOut(BaseModel):
+    id: UUID
+    username: str
+    email: str
+    is_active: bool
+
+    class Config:
+        from_attributes = True

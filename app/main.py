@@ -2,7 +2,7 @@ import numpy as np
 from fastapi import FastAPI, HTTPException, Depends, Path, status
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
-from app.schemas import PredictionInput, PredictionOutput
+from app.schemas import PredictionInput, PredictionOutput, UserOut
 from app.utils import preprocess_input, get_shap_values
 from app.model import base_model1, base_model2, base_model3, meta_model, preprocessor
 from app.auth.auth_utils import (
@@ -150,6 +150,11 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating user: {str(e)}"
         )
+
+@app.get("/me", response_model=UserOut)
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
+    """Get current authenticated user's info."""
+    return current_user
 
 @app.post("/chat")
 async def chat(

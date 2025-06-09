@@ -32,6 +32,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:59416",  # Flutter local dev
+        "http://localhost:63112",
         # Add other allowed origins as needed
         # "http://localhost:3000",  # React local dev (optional)
         # "https://your-frontend-domain.com"  # Production frontend (optional)

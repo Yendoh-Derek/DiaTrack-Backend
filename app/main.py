@@ -30,7 +30,12 @@ app = FastAPI()
 # Allow all origins (for production, specify allowed origins)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to your frontend domain in production!
+    allow_origins=[
+        "http://localhost:59416",  # Flutter local dev
+        # Add other allowed origins as needed
+        # "http://localhost:3000",  # React local dev (optional)
+        # "https://your-frontend-domain.com"  # Production frontend (optional)
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

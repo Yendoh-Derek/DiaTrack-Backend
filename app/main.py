@@ -26,23 +26,15 @@ from fastapi.middleware.cors import CORSMiddleware
 # Create the FastAPI app instance
 app = FastAPI(title="Diabetes Risk Prediction API")
 
-# Configure CORS with specific origins
-origins = [
-    "http://localhost:63021",    # Your Flutter dev server
-    "http://localhost:59416",    # Alternative Flutter port
-    "http://localhost:63112",    # Alternative Flutter port
-    "http://localhost:62924",    # Alternative Flutter port
-    "http://localhost",          # Basic localhost
-    "http://127.0.0.1:8000",    # FastAPI development server
-]
-
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["*"],
-    max_age=3600,
+    allow_origins=["*"],  # Allow all origins in development
+    allow_credentials=False,  # Must be False when allow_origins=["*"]
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+    expose_headers=["*"],  # Expose all headers
+    max_age=3600,  # Maximum time to cache preflight requests
 )
 
 
@@ -62,10 +54,6 @@ def get_db():
 @app.get("/")
 def root():
     return {"message": "Diabetes Risk Prediction API - Please authenticate to use the services"}
-
-@app.options("/token")
-async def token_options():
-    return {"allowed_methods": ["POST"]}
 
 @app.post("/token")
 async def login_for_access_token(

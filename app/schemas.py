@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Dict, Any, Literal
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -26,6 +26,15 @@ class UserOut(BaseModel):
     username: str
     email: str
     is_active: bool
+
+    class Config:
+        from_attributes = True
+
+class UserUpdate(BaseModel):
+    username: str | None = None
+    email: EmailStr | None = None
+    password: str | None = None
+    current_password: str | None = None
 
     class Config:
         from_attributes = True

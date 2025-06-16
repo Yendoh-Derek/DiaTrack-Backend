@@ -2,7 +2,7 @@ import numpy as np
 from fastapi import FastAPI, HTTPException, Depends, Path, status
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
-from app.schemas import PredictionInput, PredictionOutput, UserOut
+from app.schemas import PredictionInput, PredictionOutput, UserOut, UserUpdate
 from app.utils import preprocess_input, get_shap_values
 from app.model import base_model1, base_model2, base_model3, meta_model, preprocessor
 from app.auth.auth_utils import (
@@ -10,7 +10,8 @@ from app.auth.auth_utils import (
     create_access_token,
     authenticate_user,
     ACCESS_TOKEN_EXPIRE_MINUTES,
-    get_password_hash
+    get_password_hash,
+    verify_password
 )
 from models.user_models import User
 from app.models import PredictionLog
@@ -154,6 +155,67 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     """Get current authenticated user's info."""
     return current_user
+
+@app.patch("/me", response_model=UserOut)
+async def update_user_me(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """Update current user's information."""
+    # Verify current password if trying to change sensitive information
+    if any([user_update.password, user_update.email, user_update.username]):
+        if not user_update.current_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Current password is required to update sensitive information"
+            )
+        if not verify_password(user_update.current_password, current_user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect password"
+            )
+
+    # Update username if provided
+    if user_update.username:
+        existing_user = db.query(User).filter(
+            User.username == user_update.username,
+            User.id != current_user.id
+        ).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already registered"
+            )
+        current_user.username = user_update.username
+
+    # Update email if provided
+    if user_update.email:
+        existing_user = db.query(User).filter(
+            User.email == user_update.email,
+            User.id != current_user.id
+        ).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+        current_user.email = user_update.email
+
+    # Update password if provided
+    if user_update.password:
+        current_user.hashed_password = get_password_hash(user_update.password)
+
+    try:
+        db.commit()
+        db.refresh(current_user)
+        return current_user
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating user: {str(e)}"
+        )
 
 @app.post("/chat")
 async def chat(

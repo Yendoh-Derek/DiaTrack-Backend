@@ -166,15 +166,6 @@ Do you want me to go ahead and produce that PDF version? It would help with the 
 
 
 
-
-
-
-
-
-
-Ask ChatGPT
-
-
 Temporarily allows script execution: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 Activate the virtual environment: .\.venv\Scripts\Activate
 

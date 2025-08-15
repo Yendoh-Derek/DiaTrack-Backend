@@ -92,8 +92,6 @@ KNUST Hospital Diabetes Clinic – feedback shaped clinician-first workflow.
 
 Dr. Dorothy Araba Yakoba Agyapong – supervision and domain guidance.
 
-Dr. Prince Agyei – advised on data validation, usability, and local language support.
-
 Patients – confirmed value of remote monitoring and personalized recommendations.
 
 Technology Stack
@@ -151,30 +149,8 @@ Further optimization for recall.
 Contributors
 Derek Yendoh – Team Lead, ML & Backend Development
 
-M. A. Aseda Obeng Baah – Mobile App Development
+M. A. Aseda Obeng Baah 
 
-Elizabeth Ofori – Web App Development
+Elizabeth Ofori 
 
 Supervisor – Dr. (Mrs.) Dorothy Araba Yakoba Agyapong
-
-License
-MIT License – see LICENSE file.
-
-I can also prepare a visually enhanced PDF of this README for the award submission, including these diagrams inline, so it’s presentation-ready.
-
-Do you want me to go ahead and produce that PDF version? It would help with the Presentation & Communication criteria.
-
-
-
-Temporarily allows script execution: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-Activate the virtual environment: .\.venv\Scripts\Activate
-
-Summary of recommended versions:
-shap==0.41.0
-numba==0.56.4
-cloudpickle version: 1.6.0
-
-Prompts to start application:
-1. Temporarily allows script execution: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-2. Activate the virtual environment: .\.venv\Scripts\Activate
-3. start the application: uvicorn app.main:app --reload

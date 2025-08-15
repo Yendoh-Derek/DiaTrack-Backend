@@ -1,156 +1,153 @@
-DiaTrack
+DiaTrack Backend
+
 An Ensemble Learning Approach for Risk Prediction and Management of Type 2 Diabetes Mellitus
 
-Abstract
-DiaTrack is a dual-interface clinical decision support system designed for early diagnosis and personalized management of Type 2 Diabetes Mellitus (T2DM). It combines a clinician-facing web dashboard with a patient-facing mobile application, linked to a backend powered by a stacked ensemble learning model for accurate risk prediction.
+Overview
 
-The ensemble integrates CatBoost, HistGradientBoosting, and TabNet as base learners, with XGBoost as the meta-learner, and uses a LightGBM surrogate model for SHAP-based interpretability. The system is deployed via FastAPI (backend, hosted on Render), with Next.js for the web dashboard and Flutter for the mobile app.
+This repository contains the backend for DiaTrack, a dual-interface clinical decision support system designed for early diagnosis and personalized management of Type 2 Diabetes Mellitus (T2DM).
 
-DiaTrack achieved AUC: 0.978, Accuracy: 0.98, Precision: 0.94, and F1: 0.80, making it a high-performing and clinically relevant tool. Designed with stakeholder input, it ensures clinician oversight, strong security, and usability, with future support for Twi language and automated lab data integration.
+The backend is built with FastAPI and serves as the central hub that connects:
 
-System Overview
+Clinician-facing web dashboard (Next.js)
 
-Clinician Dashboard (Web – Next.js): Patient registration, risk assessment, recommendation entry.
+Patient-facing mobile application (Flutter)
 
-Patient App (Mobile – Flutter): View predictions, recommendations, history.
+Machine learning risk prediction engine (stacked ensemble with SHAP interpretability)
 
-Backend (FastAPI): Handles authentication, data validation, model inference, and API endpoints.
+PostgreSQL database for secure data storage
 
-Database: Stores patient profiles, clinical data, predictions, and recommendations.
+The backend handles:
 
-ML Engine: Stacked ensemble model with SHAP-based interpretability.
+Authentication & Role-based Access Control
 
-Ensemble Architecture
+Data validation & preprocessing
 
-Base Learners:
+Model inference & SHAP explanations
 
-CatBoost
+API endpoints for frontend integration
 
-HistGradientBoosting
+Storage & retrieval of patient records, predictions, and recommendations
 
-TabNet
+System Context
 
-Meta-Learner:
+Although this repository focuses on the backend, DiaTrack consists of three main components:
 
-XGBoost
+Clinician Dashboard – Web app for patient management, risk assessment, and recommendation entry.
 
-Surrogate Model:
+Patient App – Mobile app for patients to view predictions, recommendations, and history.
 
-LightGBM for SHAP value computation.
+Backend (This Repo) – Core system handling API requests, database operations, and ML predictions.
 
-Workflow:
+Backend Architecture
+Core Components
 
-Input features are preprocessed (scaling for numerical, one-hot encoding for categorical).
-
-Predictions from base models are passed to the meta-learner.
-
-The meta-learner outputs a final risk score (0–1).
-
-SHAP values are generated via the surrogate model for interpretability.
-
-Data Flow
-
-Data Collection – Patient data entered via clinician dashboard or patient app.
-
-Data Validation – Both frontend and backend enforce schema and range checks.
-
-Preprocessing – Missing value handling, feature scaling, encoding, and feature engineering (e.g., glucose-to-HbA1c ratio, risk condition flags).
-
-Prediction – Stacked ensemble produces risk score.
-
-Interpretation – SHAP explains feature contributions.
-
-Storage – Prediction results and SHAP explanations stored in the database.
-
-Display – Results shown on clinician and patient dashboards.
-
-Key Features
-Clinician-controlled prediction workflow.
-
-Stacked ensemble model for high predictive accuracy.
-
-SHAP interpretability for transparency.
-
-Secure authentication for both user roles.
-
-Role-based dashboards.
-
-Multilingual support (English, Twi in development).
-
-Designed for scalability and lab system integration.
-
-Performance Metrics
-Metric	Value
-AUC	0.978
-Accuracy	0.98
-Precision	0.94
-Recall	0.698
-F1 Score	0.80
-
-Stakeholder Engagement
-KNUST Hospital Diabetes Clinic – feedback shaped clinician-first workflow.
-
-Dr. Dorothy Araba Yakoba Agyapong – supervision and domain guidance.
-
-Patients – confirmed value of remote monitoring and personalized recommendations.
-
-Technology Stack
-Backend: FastAPI, Pydantic, Uvicorn
-
-ML: CatBoost, HistGradientBoosting, TabNet, XGBoost, LightGBM, SHAP
-
-Web Frontend: Next.js, Tailwind CSS
-
-Mobile Frontend: Flutter
+API Framework: FastAPI (with Pydantic for schema validation)
 
 Database: PostgreSQL
 
-Hosting: Render (Backend), Firebase (Frontend)
+ML Engine: Stacked Ensemble Model (CatBoost, HistGradientBoosting, TabNet → XGBoost meta-learner)
 
-Installation
-Backend:
+Interpretability: LightGBM surrogate model for SHAP value computation
 
-bash
-Copy
-Edit
-cd backend
+Authentication: JWT-based secure login for clinicians and patients
+
+Hosting: Render (with Uvicorn for ASGI server)
+
+Machine Learning Workflow
+
+Input Validation – Backend enforces schema checks for patient data using Pydantic.
+
+Preprocessing – Numerical features scaled, categorical features one-hot encoded, feature engineering applied:
+
+Age & BMI binning
+
+Glucose-to-HbA1c ratio
+
+Risk condition flags
+
+Prediction Pipeline –
+
+Base models generate predictions.
+
+Predictions fed into meta-learner (XGBoost) for final risk score (0–1).
+
+Interpretability – SHAP values generated from a LightGBM surrogate model.
+
+Response – Risk score and SHAP explanation returned via API.
+
+Storage – Results saved in PostgreSQL for historical tracking and frontend display.
+
+Key Backend Features
+
+Role-based authentication for clinicians and patients
+
+Secure data handling with validation at both frontend and backend
+
+API endpoints for:
+
+Patient registration
+
+Clinical data submission
+
+Risk prediction retrieval
+
+SHAP-based feature importance
+
+Recommendation management
+
+Integrated ML model for real-time inference
+
+Designed for scalability and integration with lab systems
+
+API Overview
+
+Some core endpoints (full list in /docs when running the app):
+
+Method	Endpoint	Description
+POST	/auth/login	Authenticate user & issue JWT
+POST	/patients/	Register a new patient
+GET	/patients/{id}	Retrieve patient details
+POST	/predict/	Submit patient data & get risk score + SHAP values
+POST	/recommendations/	Add clinician recommendations
+GET	/recommendations/{patient}	Retrieve patient recommendations
+Performance
+
+Backend ML engine performance (on validation set):
+
+Metric	Value
+AUC	0.978
+Accuracy	0.980
+Precision	0.940
+Recall	0.698
+F1 Score	0.800
+
+Installation & Setup
+Clone Repository
+git clone https://github.com/Yendoh-Derek/diatrack-backend.git
+cd diatrack-backend
+
+Install Dependencies
 pip install -r requirements.txt
+
+Run Backend
 uvicorn main:app --reload
-Web App:
 
-bash
-Copy
-Edit
-cd web
-npm install
-npm run dev
-Mobile App:
-
-bash
-Copy
-Edit
-cd mobile
-flutter pub get
-flutter run
 Usage
-Clinician: Login → Add patient → Enter data → Predict → View results & add recommendations.
 
-Patient: Login → View predictions & recommendations → Follow-up actions.
+Clinician Workflow
 
-Future Work
-Automated lab data ingestion.
+Login → Add patient → Enter data → Predict risk score → View SHAP explanation → Add recommendations
 
-Expanded language support.
+Patient Workflow
 
-Mobile offline mode.
+Login → View prediction → View recommendations → Take follow-up actions
 
-Further optimization for recall.
+Future Backend Enhancements
 
-Contributors
-Derek Yendoh – Team Lead, ML & Backend Development
+Automated lab data ingestion from hospital systems
 
-M. A. Aseda Obeng Baah 
+Multi-language API support (English, Twi)
 
-Elizabeth Ofori 
+Mobile offline prediction mode
 
-Supervisor – Dr. (Mrs.) Dorothy Araba Yakoba Agyapong
+Optimized recall for improved sensitivity
